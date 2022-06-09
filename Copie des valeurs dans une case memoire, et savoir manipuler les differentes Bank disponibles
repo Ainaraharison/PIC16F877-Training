@@ -1,0 +1,43 @@
+list p=16f877 , r=dec
+#include <p16f877.inc> 
+__CONFIG H'3F39'
+    
+bank0 macro 
+  bcf STATUS,RP0
+  bcf STATUS,RP1
+  endm  ; endm: end macro 
+
+bank1 macro 
+  bsf STATUS,RP0
+  bcf STATUS,RP1 
+  endm 
+
+bank2 macro 
+  bcf STATUS,RP0
+  bsf STATUS,RP1 
+  endm 
+
+bank3 macro 
+  bsf STATUS,RP0
+  bsf STATUS,RP1 
+  endm 
+ORG 0x00
+goto start 
+start 
+  bank0
+  movlw 35
+  movwf 0x20
+  bank1
+  movlw 'A'
+  movwf 0x20
+  bank2
+  movlw -5
+  movwf 0x10
+  bank3
+  movlw H'35'
+  movwf 0x10
+  
+  
+loop
+  goto loop
+  END
