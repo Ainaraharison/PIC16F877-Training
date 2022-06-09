@@ -1,0 +1,40 @@
+list p=16f877 , r=dec
+#include <p16f877.inc> 
+__CONFIG H'3F39'
+    
+bank0 macro 
+  bcf STATUS,IRP
+  endm 
+bank1 macro 
+  bsf STATUS,IRP
+  endm 
+;***********
+caractere EQU 0x1E0 ; c'est juste qu'on choisi une case memoire libre pour stocker temporairement l'adresse de la case memoire de chaque caractere en majuscule
+  ORG 0x00
+  goto start
+
+start 
+  bank1 
+  movlw 90h
+  movwf FSR 
+  
+  movlw 0x41 ;Code ASCII de caractere A='41h'
+  movwf INDF 
+  
+  movwf caractere ;pour qu'on puisse stocker temporairement le code ASCII afin qu'on le puisse le manipuler
+   
+loop 
+  incf FSR,f    ;on a incremente la case memoire suivante dans laquelle on veut acceder 
+  incf caractere,f   ; on a incremente le code ASCII de caractere suivante 
+  movf caractere,w
+  movwf INDF      ;on stocke a chaque passage dans INDF l'adresse de code ASCII qu'on veut acceder puis on charge dans la case memoire pointe par FSR
+  movlw 0x5A   ;le code ASCII de Z
+  subwf caractere,w
+  btfss STATUS,Z
+  goto loop
+  goto rien 
+
+rien 
+  goto rien 
+  
+END
